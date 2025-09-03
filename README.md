@@ -8,11 +8,15 @@ You can use the `-h` or `--help` to show this help:
 
 ```
 Usage:
-  ./rakubin.raku -d|--directory=<Str> [-a|--address=<Str>] [-p|--port[=UInt]]
+pastebin.raku [options]
 
-    -a|--address=<Str>      bind to this address [default: '127.0.0.1']
-    -p|--port[=UInt]        bind to this port [default: 9999]
-    -d|--directory=<Str>    serve this directory
+options:
+    -a|--address=<Str>           bind to this address [default: '127.0.0.1']
+    -p|--port[=UInt]             bind to this port [default: 9999]
+    -d|--directory=<Str>         serve this directory
+    -m|--max-dir-size[=UInt]     max directory size allowed in byte [default: 100mb]
+    -f|--max-file-size[=UInt]    max file size allowed in byte [default: 10mb]
+    -t|--timeout[=UInt]          timeout in second to receive a file [default: 1]
 ```
 
 Basic usage:
