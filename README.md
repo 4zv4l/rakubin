@@ -12,11 +12,14 @@ pastebin.raku [options]
 
 options:
     -a|--address=<Str>           bind to this address [default: '127.0.0.1']
-    -p|--port[=UInt]             bind to this port [default: 9999]
-    -d|--directory=<Str>         serve this directory
+    -p|--port[=UInt]             bind to this port (tcp server) [default: 9999]
+    -w|--wport[=UInt]            bind to this port (web server) [default: 4433]
+    -d|--directory=<Str>         use this directory to save/serve the pastes
     -m|--max-dir-size[=UInt]     max directory size allowed in byte [default: 100mb]
     -f|--max-file-size[=UInt]    max file size allowed in byte [default: 10mb]
     -t|--timeout[=UInt]          timeout in second to receive a file [default: 1]
+    -k|--pkey-path=<Str>         private key path for tls
+    -c|--cert-path=<Str>         certificate path for tls
 ```
 
 Basic usage:
