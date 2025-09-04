@@ -1,8 +1,8 @@
-# rakubin
+# Rakubin
 
 simple termbin in Raku
 
-# usage
+## Usage
 
 You can use the `-h` or `--help` to show this help:
 
@@ -20,9 +20,13 @@ options:
     -t|--timeout[=UInt]          timeout in second to receive a paste [default: 1]
     -k|--pkey-path=<Str>         private key path for tls
     -c|--cert-path=<Str>         certificate path for tls
+    -l|--logfile=<Str>           use that file for logging
+    -v|--loglevel=<Loglevels>    log message up to that level [default: DEBUG]
 ```
 
-Basic usage:
+Loglevels: `TRACE`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `FATAL`.
+
+## Example
 
 ```bash
 # start rakubin server
