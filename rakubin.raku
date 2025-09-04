@@ -35,7 +35,7 @@ unit sub MAIN(
     Str        :k(:$pkey-path),                   #= private key path for tls
     Str        :c(:$cert-path),                   #= certificate path for tls
     Str        :l(:$logfile),                     #= use that file for logging
-    Loglevels  :v(:$loglevel)      = DEBUG,     #= log message up to that level
+    Loglevels  :v(:$loglevel)      = DEBUG,       #= log message up to that level
 );
 
 #####################
