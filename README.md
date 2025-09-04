@@ -17,7 +17,7 @@ options:
     -d|--directory=<Str>         use this directory to save/serve the pastes
     -m|--max-dir-size[=UInt]     max directory size allowed in byte [default: 100mb]
     -f|--max-file-size[=UInt]    max file size allowed in byte [default: 10mb]
-    -t|--timeout[=UInt]          timeout in second to receive a file [default: 1]
+    -t|--timeout[=UInt]          timeout in second to receive a paste [default: 1]
     -k|--pkey-path=<Str>         private key path for tls
     -c|--cert-path=<Str>         certificate path for tls
 ```
