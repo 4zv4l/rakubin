@@ -23,6 +23,8 @@ sub USAGE {
         -c|--cert-path=<Str>         certificate path for tls
         -l|--logfile=<Str>           use that file for logging
         -v|--loglevel=<Loglevels>    log message up to that level [default: DEBUG]
+        -r|--randlen[=UInt]          IDs length (may take time to generate) [default: 4]
+        -g|--gc                      Delete old paste if the pool is full [default: False]
     USAGE
 }
 
@@ -39,19 +41,25 @@ unit sub MAIN(
     Str        :c(:$cert-path),                   #= certificate path for tls
     Str        :l(:$logfile),                     #= use that file for logging
     Loglevels  :v(:$loglevel)      = DEBUG,       #= log message up to that level
+    UInt       :r(:$randlen)       = 4,           #= IDs length (may take time to generate)
+    Bool       :g(:$gc)            = False,       #= Delete old paste if the pool is full
 );
 
 #####################
 # Basic Var/Log Setup
 
+info "Generating IDs...";
+my @IDs       = $randlen ?? ('a'..'z',0..9).flat.combinations($randlen).pick(*).flat !! (); # paste IDs
 my $is_tls    = so ($pkey-path and $cert-path);
 my $show_port = !so (($web-port == 80 and !$is_tls) or ($web-port == 443 and $is_tls));
 my $web_url   = "{$is_tls ?? "https" !! "http" }://{$url}{":" ~ $web-port if $show_port}";
 logger.send-to($logfile, :level(* >= $loglevel)) if $logfile;
+debug "IDS: {@IDs.elems} available";
 debug "logging up to $loglevel at $logfile" if $logfile;
 debug "is_tls: $is_tls";
 debug "show_port: $show_port";
 debug "web_url: $web_url";
+debug "gc: $gc";
 
 ##################
 # Web Server Setup
@@ -118,16 +126,37 @@ given IO::Socket::Async.listen($address, $tcp-port) {
             when .chars == 0 {}
             # create a paste
             default {
-                my $current-size = run(:out, <<du -b $directory>>).out.slurp.split(/\s/)[0];
+                #gc IDs
+                my $remaining-IDs = @IDs.elems;
+                debug "Remaining IDs: {@IDs.elems}";
+                if $remaining-IDs == 0 and $gc {
+                    my $to-del = $directory.IO.dir(test => { "$directory/$_".IO.f }).sort({.created}).head;
+                    info "Deleting $to-del";
+                    unlink $to-del;
+                    push @IDs, $to-del.basename;
+                }
+
+                # gc free disk space
+                my $current-size = $directory.IO.dir.map({.s}).sum;
                 debug "Current size: {format-bytes +$current-size}/{format-bytes +$max-dir-size}";
-                if $current-size < $max-dir-size {
-                    my $filename = "{(('a'..'z'),('A'..'Z'),(0..9)).flat.roll(10).join}{time}";
+                if $current-size > $max-dir-size and $gc {
+                    while $current-size > $max-dir-size {
+                        my $to-del = $directory.IO.dir(test => { "$directory/$_".IO.f }).sort({.created}).head;
+                        info "Deleting $to-del";
+                        $current-size -= $to-del.IO.s;
+                        unlink $to-del;
+                        push @IDs, $to-del.basename;
+                    }
+                }
+
+                if $current-size < $max-dir-size and @IDs.elems {
+                    my $filename = @IDs.pop.join;
                     $directory.IO.add($filename).spurt($data);
                     $client.say: "$web_url/$filename";
                     info "$client_address ==> $filename";
                 } else {
-                    error "max size reached, please contact the admin for cleanup";
-                    $client.say: "max size reached, please contact the admin for cleanup";
+                    error "paste pool is full !!!";
+                    $client.say: "the paste pool is full, please contact the admin for cleanup";
                 }
             }
         }
