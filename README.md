@@ -1,6 +1,6 @@
 # Rakubin
 
-simple termbin in Raku
+Simple [termbin](https://github.com/insomnimus/termbin) in Raku, lets you create paste from the command line.
 
 ## Usage
 
