@@ -3,6 +3,7 @@
 use Log::Async <trace color>;
 use Cro::HTTP::Router;
 use Cro::HTTP::Server;
+use Number::Bytes::Human :functions;
 
 sub USAGE {
     print q:c:to/USAGE/;
@@ -29,8 +30,8 @@ unit sub MAIN(
     UInt       :p(:$tcp-port)      = 9999,        #= bind to this port (tcp server)
     UInt       :w(:$web-port)      = 4433,        #= bind to this port (web server)
     Str        :d(:$directory) is required,       #= use this directory to save/serve the pastes
-    UInt       :m(:$max-dir-size)  = 100_000_000, #= max directory size allowed in byte
-    UInt       :f(:$max-file-size) = 10_000_000,  #= max file size allowed in byte
+    UInt       :m(:$max-dir-size)  = 104_857_600, #= max directory size allowed in byte
+    UInt       :f(:$max-file-size) = 10_485_760,  #= max file size allowed in byte
     UInt       :t(:$timeout)       = 1,           #= timeout in second to receive a paste
     Str        :k(:$pkey-path),                   #= private key path for tls
     Str        :c(:$cert-path),                   #= certificate path for tls
@@ -114,7 +115,7 @@ given IO::Socket::Async.listen($address, $tcp-port) {
             # create a paste
             default {
                 my $current-size = run(:out, <<du -b $directory>>).out.slurp.split(/\s/)[0];
-                debug "Current size: $current-size/$max-dir-size";
+                debug "Current size: {format-bytes +$current-size}/{format-bytes +$max-dir-size}";
                 if $current-size < $max-dir-size {
                     my $filename = "{('a'..'z').roll(10).join}{time}";
                     $directory.IO.add($filename).spurt($data);
