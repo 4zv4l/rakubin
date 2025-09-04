@@ -112,8 +112,8 @@ given IO::Socket::Async.listen($address, $tcp-port) {
                     $client.say: "$web_url/$filename";
                     info "$client_address ==> $filename";
                 } else {
-                    error "max size reached, please contact SIBL for cleanup";
-                    $client.say: "max size reached, please contact SIBL for cleanup";
+                    error "max size reached, please contact the admin for cleanup";
+                    $client.say: "max size reached, please contact the admin for cleanup";
                 }
             }
         }
