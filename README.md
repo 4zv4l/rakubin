@@ -39,4 +39,4 @@ curl http://127.0.0.1:4433/ovxmsjectt1756871999
 
 You can stop the server at anytime using `ctrl-c`.
 
-> Currently uses "du -b <dir>" to check directory size (may not work on Windows).
+> Currently uses "du -b" to check directory size (may not work on Windows).
