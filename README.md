@@ -10,7 +10,6 @@ You can use the `-h` or `--help` to show this help:
 Usage:
 pastebin.raku [options]
 
-
 options:
     -a|--address=<Str>           bind to this address [default: '127.0.0.1']
     -u|--url=<Str>               uses this url when generating links
