@@ -46,3 +46,7 @@ foobar
 ```
 
 You can stop the server at anytime using `ctrl-c`.
+
+> You can use custom IDs for the paste by pre-creating files
+> in the $directory since the garbage collector will reuse found file
+> when there are no more IDs available.
