@@ -121,7 +121,7 @@ given IO::Socket::Async.listen($address, $tcp-port) {
                 my $current-size = run(:out, <<du -b $directory>>).out.slurp.split(/\s/)[0];
                 debug "Current size: {format-bytes +$current-size}/{format-bytes +$max-dir-size}";
                 if $current-size < $max-dir-size {
-                    my $filename = "{('a'..'z').roll(10).join}{time}";
+                    my $filename = "{(('a'..'z'),('A'..'Z'),(0..9)).flat.roll(10).join}{time}";
                     $directory.IO.add($filename).spurt($data);
                     $client.say: "$web_url/$filename";
                     info "$client_address ==> $filename";
