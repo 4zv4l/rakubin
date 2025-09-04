@@ -12,6 +12,7 @@ pastebin.raku [options]
 
 options:
     -a|--address=<Str>           bind to this address [default: '127.0.0.1']
+    -u|--url=<Str>               uses this url when generating links
     -p|--tcp-port[=UInt]         bind to this port (tcp server) [default: 9999]
     -w|--web-port[=UInt]         bind to this port (web server) [default: 4433]
     -d|--directory=<Str>         use this directory to save/serve the pastes
