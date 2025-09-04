@@ -70,6 +70,8 @@ my $application = route {
     }
 
     get -> $id where $directory.IO.add($id).e {
+        my @caddr = request.connection.map({.peer-host, .peer-port}).first;
+        info "{@caddr.join(':')} <== $id";
         my $path = $directory.IO.add($id);
         content 'text/plain', $path.slurp;
     }
