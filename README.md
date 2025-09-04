@@ -12,8 +12,8 @@ pastebin.raku [options]
 
 options:
     -a|--address=<Str>           bind to this address [default: '127.0.0.1']
-    -p|--port[=UInt]             bind to this port (tcp server) [default: 9999]
-    -w|--wport[=UInt]            bind to this port (web server) [default: 4433]
+    -p|--tcp-port[=UInt]         bind to this port (tcp server) [default: 9999]
+    -w|--web-port[=UInt]         bind to this port (web server) [default: 4433]
     -d|--directory=<Str>         use this directory to save/serve the pastes
     -m|--max-dir-size[=UInt]     max directory size allowed in byte [default: 100mb]
     -f|--max-file-size[=UInt]    max file size allowed in byte [default: 10mb]
@@ -38,3 +38,5 @@ curl http://127.0.0.1:4433/ovxmsjectt1756871999
 ```
 
 You can stop the server at anytime using `ctrl-c`.
+
+> Currently uses "du -b <dir>" to check directory size (may not work on Windows).

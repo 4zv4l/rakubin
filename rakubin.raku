@@ -11,8 +11,8 @@ sub USAGE {
 
     options:
         -a|--address=<Str>           bind to this address [default: '127.0.0.1']
-        -p|--port[=UInt]             bind to this port (tcp server) [default: 9999]
-        -w|--wport[=UInt]            bind to this port (web server) [default: 4433]
+        -p|--tcp-port[=UInt]         bind to this port (tcp server) [default: 9999]
+        -w|--web-port[=UInt]         bind to this port (web server) [default: 4433]
         -d|--directory=<Str>         use this directory to save/serve the pastes
         -m|--max-dir-size[=UInt]     max directory size allowed in byte [default: 100mb]
         -f|--max-file-size[=UInt]    max file size allowed in byte [default: 10mb]
@@ -24,8 +24,8 @@ sub USAGE {
 
 unit sub MAIN(
     Str  :a(:$address)       = '127.0.0.1', #= bind to this address
-    UInt :p(:$port)          = 9999,        #= bind to this port (tcp server)
-    UInt :w(:$wport)         = 4433,        #= bind to this port (web server)
+    UInt :p(:$tcp-port)      = 9999,        #= bind to this port (tcp server)
+    UInt :w(:$web-port)      = 4433,        #= bind to this port (web server)
     Str  :d(:$directory) is required,       #= use this directory to save/serve the pastes
     UInt :m(:$max-dir-size)  = 100_000_000, #= max directory size allowed in byte
     UInt :f(:$max-file-size) = 10_000_000,  #= max file size allowed in byte
@@ -34,21 +34,26 @@ unit sub MAIN(
     Str  :c(:$cert-path),                   #= certificate path for tls
 );
 
+my $is_tls    = so ($pkey-path and $cert-path);
+my $show_port = !so (($web-port == 80 and !$is_tls) or ($web-port == 443 and $is_tls));
+my $web_url   = "{$is_tls ?? "https" !! "http" }://{$address}{":" ~ $web-port if $show_port}";
+debug "is_tls: $is_tls";
+debug "show_port: $show_port";
+debug "web_url: $web_url";
+
 ##################
 # Web Server Setup
 
 my %tls = private-key-file => $pkey-path, certificate-file => $cert-path;
-my $is_tls = so ($pkey-path and $cert-path);
-debug "is tls: $is_tls";
 my $application = route {
     get -> {
        content 'text/html', q:c:to/USAGE/;
         <h3>Send some text and read it back</h3>
         
         <code>
-        $ echo just testing! | nc {$address} {$port} </br>
-        {$is_tls ?? "https" !! "http" }://{$address}:{$wport}/test </br>
-        $ curl {$is_tls ?? "https" !! "http" }://{$address}:{$wport}/test </br>
+        $ echo just testing! | nc {$address} {$tcp-port} </br>
+        {$web_url}/test </br>
+        $ curl {$web_url}/test </br>
         just testing! </br>
         </code>
         USAGE
@@ -61,8 +66,8 @@ my $application = route {
 };
 
 my $web = $is_tls
-            ?? Cro::HTTP::Server.new(:host($address), :port($wport), :$application, :%tls)
-            !! Cro::HTTP::Server.new(:host($address), :port($wport), :$application);
+            ?? Cro::HTTP::Server.new(:host($address), :port($web-port), :$application, :%tls)
+            !! Cro::HTTP::Server.new(:host($address), :port($web-port), :$application);
 $web.start;
 
 ##################
@@ -70,14 +75,14 @@ $web.start;
 
 $directory.IO.mkdir;
 
-given IO::Socket::Async.listen($address, $port) {
-    info "Serving $directory on $address:$port";
+given IO::Socket::Async.listen($address, $tcp-port) {
+    info "Serving $directory on $address:$tcp-port";
     .Supply.tap: -> $client {
         my $client_address = "{$client.peer-host}:{$client.peer-port}";
         info "New client on $client_address";
         LEAVE $client.close;
 
-        # get client data/request
+        # get client paste
         my $data = "";
         react {
             whenever $client.Supply(:bin) -> $raw {
@@ -104,7 +109,7 @@ given IO::Socket::Async.listen($address, $port) {
                 if $current-size < $max-dir-size {
                     my $filename = "{('a'..'z').roll(10).join}{time}";
                     $directory.IO.add($filename).spurt($data);
-                    $client.say: "{$is_tls ?? "https" !! "http" }://$address:$wport/$filename";
+                    $client.say: "web_url/$filename";
                     info "$client_address ==> $filename";
                 } else {
                     error "max size reached, please contact SIBL for cleanup";
