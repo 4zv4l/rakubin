@@ -148,7 +148,7 @@ given IO::Socket::Async.listen($address, $tcp-port) {
                             unlink $to-del;
                             push @IDs, $to-del.basename;
                         } else {
-                            fatal "Couldnt free any paste";
+                            fatal "Couldnt free enough memory";
                         }
                     }
                 }
