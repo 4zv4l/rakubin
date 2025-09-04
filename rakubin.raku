@@ -109,7 +109,7 @@ given IO::Socket::Async.listen($address, $tcp-port) {
                 if $current-size < $max-dir-size {
                     my $filename = "{('a'..'z').roll(10).join}{time}";
                     $directory.IO.add($filename).spurt($data);
-                    $client.say: "web_url/$filename";
+                    $client.say: "$web_url/$filename";
                     info "$client_address ==> $filename";
                 } else {
                     error "max size reached, please contact SIBL for cleanup";
