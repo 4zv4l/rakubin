@@ -130,22 +130,26 @@ given IO::Socket::Async.listen($address, $tcp-port) {
                 my $remaining-IDs = @IDs.elems;
                 debug "Remaining IDs: {@IDs.elems}";
                 if $remaining-IDs == 0 and $gc {
-                    my $to-del = $directory.IO.dir(test => { "$directory/$_".IO.f }).sort({.created}).head;
-                    info "Deleting $to-del";
-                    unlink $to-del;
-                    push @IDs, $to-del.basename;
+                    warning "No more IDs, gc is on !";
+                    @IDs = $directory.IO.dir(test => { "$directory/$_".IO.f }).sort({.created}).map({.basename});
+                    error "Couldnt free any paste" unless @IDs;
                 }
 
                 # gc free disk space
                 my $current-size = $directory.IO.dir.map({.s}).sum;
                 debug "Current size: {format-bytes +$current-size}/{format-bytes +$max-dir-size}";
                 if $current-size > $max-dir-size and $gc {
+                    warning "No more space, gc is on !";
                     while $current-size > $max-dir-size {
                         my $to-del = $directory.IO.dir(test => { "$directory/$_".IO.f }).sort({.created}).head;
-                        info "Deleting $to-del";
-                        $current-size -= $to-del.IO.s;
-                        unlink $to-del;
-                        push @IDs, $to-del.basename;
+                        if $to-del {
+                            warning "Deleting $to-del";
+                            $current-size -= $to-del.IO.s;
+                            unlink $to-del;
+                            push @IDs, $to-del.basename;
+                        } else {
+                            fatal "Couldnt free any paste";
+                        }
                     }
                 }
 
@@ -155,7 +159,7 @@ given IO::Socket::Async.listen($address, $tcp-port) {
                     $client.say: "$web_url/$filename";
                     info "$client_address ==> $filename";
                 } else {
-                    error "paste pool is full !!!";
+                    fatal "paste pool is full !!!";
                     $client.say: "the paste pool is full, please contact the admin for cleanup";
                 }
             }
