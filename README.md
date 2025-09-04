@@ -10,6 +10,7 @@ You can use the `-h` or `--help` to show this help:
 Usage:
 pastebin.raku [options]
 
+
 options:
     -a|--address=<Str>           bind to this address [default: '127.0.0.1']
     -u|--url=<Str>               uses this url when generating links
@@ -23,6 +24,8 @@ options:
     -c|--cert-path=<Str>         certificate path for tls
     -l|--logfile=<Str>           use that file for logging
     -v|--loglevel=<Loglevels>    log message up to that level [default: DEBUG]
+    -r|--randlen[=UInt]          IDs length (may take time to generate) [default: 4]
+    -g|--gc                      Delete old paste if the pool is full [default: False]
 ```
 
 Loglevels: `TRACE`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `FATAL`.
@@ -34,14 +37,12 @@ Loglevels: `TRACE`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `FATAL`.
 rakubin.raku -d tmp
 
 # create a paste
-cat rakubin.raku | nc localhost 9999
-> http://127.0.0.1:4433/ovxmsjectt1756871999
+echo foobar | nc localhost 9999
+http://127.0.0.1:4433/a4bz
 
 # access the paste
-curl http://127.0.0.1:4433/ovxmsjectt1756871999
-...
+curl http://127.0.0.1:4433/a4bz
+foobar
 ```
 
 You can stop the server at anytime using `ctrl-c`.
-
-> Currently uses "du -b" to check directory size (may not work on Windows).
