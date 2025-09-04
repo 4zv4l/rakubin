@@ -49,7 +49,7 @@ unit sub MAIN(
 # Basic Var/Log Setup
 
 info "Generating IDs...";
-my @IDs       = $randlen ?? ('a'..'z',0..9).flat.combinations($randlen).pick(*).flat !! (); # paste IDs
+my @IDs       = $randlen ?? ('a'..'z',0..9).flat.combinations($randlen).pick(*) !! ();
 my $is_tls    = so ($pkey-path and $cert-path);
 my $show_port = !so (($web-port == 80 and !$is_tls) or ($web-port == 443 and $is_tls));
 my $web_url   = "{$is_tls ?? "https" !! "http" }://{$url}{":" ~ $web-port if $show_port}";
