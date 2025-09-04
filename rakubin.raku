@@ -16,20 +16,20 @@ sub USAGE {
         -d|--directory=<Str>         use this directory to save/serve the pastes
         -m|--max-dir-size[=UInt]     max directory size allowed in byte [default: 100mb]
         -f|--max-file-size[=UInt]    max file size allowed in byte [default: 10mb]
-        -t|--timeout[=UInt]          timeout in second to receive a file [default: 1]
+        -t|--timeout[=UInt]          timeout in second to receive a paste [default: 1]
         -k|--pkey-path=<Str>         private key path for tls
         -c|--cert-path=<Str>         certificate path for tls
     USAGE
 }
 
 unit sub MAIN(
-    Str  :a(:$address)   = '127.0.0.1',     #= bind to this address
-    UInt :p(:$port)      = 9999,            #= bind to this port (tcp server)
-    UInt :w(:$wport)     = 4433,            #= bind to this port (web server)
+    Str  :a(:$address)       = '127.0.0.1', #= bind to this address
+    UInt :p(:$port)          = 9999,        #= bind to this port (tcp server)
+    UInt :w(:$wport)         = 4433,        #= bind to this port (web server)
     Str  :d(:$directory) is required,       #= use this directory to save/serve the pastes
     UInt :m(:$max-dir-size)  = 100_000_000, #= max directory size allowed in byte
     UInt :f(:$max-file-size) = 10_000_000,  #= max file size allowed in byte
-    UInt :t(:$timeout) = 1,                 #= timeout in second to receive a file
+    UInt :t(:$timeout)       = 1,           #= timeout in second to receive a paste
     Str  :k(:$pkey-path),                   #= private key path for tls
     Str  :c(:$cert-path),                   #= certificate path for tls
 );
