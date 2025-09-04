@@ -30,10 +30,10 @@ rakubin.raku -d tmp
 
 # create a paste
 cat rakubin.raku | nc localhost 9999
-> http://127.0.0.1:9999/ovxmsjectt1756871999
+> http://127.0.0.1:4433/ovxmsjectt1756871999
 
 # access the paste
-curl http://127.0.0.1:9999/ovxmsjectt1756871999
+curl http://127.0.0.1:4433/ovxmsjectt1756871999
 ...
 ```
 
