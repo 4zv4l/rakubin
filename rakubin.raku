@@ -12,6 +12,7 @@ sub USAGE {
 
     options:
         -a|--address=<Str>           bind to this address [default: '127.0.0.1']
+        -u|--url=<Str>               uses this url when generating links
         -p|--tcp-port[=UInt]         bind to this port (tcp server) [default: 9999]
         -w|--web-port[=UInt]         bind to this port (web server) [default: 4433]
         -d|--directory=<Str>         use this directory to save/serve the pastes
@@ -27,6 +28,7 @@ sub USAGE {
 
 unit sub MAIN(
     Str        :a(:$address)       = '127.0.0.1', #= bind to this address
+    Str        :u(:$url)           = $address,    #= uses this url when generating links
     UInt       :p(:$tcp-port)      = 9999,        #= bind to this port (tcp server)
     UInt       :w(:$web-port)      = 4433,        #= bind to this port (web server)
     Str        :d(:$directory) is required,       #= use this directory to save/serve the pastes
@@ -44,7 +46,7 @@ unit sub MAIN(
 
 my $is_tls    = so ($pkey-path and $cert-path);
 my $show_port = !so (($web-port == 80 and !$is_tls) or ($web-port == 443 and $is_tls));
-my $web_url   = "{$is_tls ?? "https" !! "http" }://{$address}{":" ~ $web-port if $show_port}";
+my $web_url   = "{$is_tls ?? "https" !! "http" }://{$url}{":" ~ $web-port if $show_port}";
 logger.send-to($logfile, :level(* >= $loglevel)) if $logfile;
 debug "logging up to $loglevel at $logfile" if $logfile;
 debug "is_tls: $is_tls";
@@ -61,7 +63,7 @@ my $application = route {
         <h3>Send some text and read it back</h3>
         
         <code>
-        $ echo just testing! | nc {$address} {$tcp-port} </br>
+        $ echo just testing! | nc {$url} {$tcp-port} </br>
         {$web_url}/test </br>
         $ curl {$web_url}/test </br>
         just testing! </br>
