@@ -15,7 +15,7 @@ options:
     -u|--url=<Str>               uses this url when generating links
     -p|--tcp-port[=UInt]         bind to this port (tcp server) [default: 9999]
     -w|--web-port[=UInt]         bind to this port (web server) [default: 4433]
-    -d|--directory=<Str>         use this directory to save/serve the pastes
+    -d|--directory=<Str>         directory to save/serve the pastes [mendatory]
     -m|--max-dir-size[=UInt]     max directory size allowed in byte [default: 100mb]
     -f|--max-file-size[=UInt]    max file size allowed in byte [default: 10mb]
     -t|--timeout[=UInt]          timeout in second to receive a paste [default: 1]

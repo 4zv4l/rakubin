@@ -15,7 +15,7 @@ sub USAGE {
         -u|--url=<Str>               uses this url when generating links
         -p|--tcp-port[=UInt]         bind to this port (tcp server) [default: 9999]
         -w|--web-port[=UInt]         bind to this port (web server) [default: 4433]
-        -d|--directory=<Str>         use this directory to save/serve the pastes
+        -d|--directory=<Str>         directory to save/serve the pastes [mendatory]
         -m|--max-dir-size[=UInt]     max directory size allowed in byte [default: 100mb]
         -f|--max-file-size[=UInt]    max file size allowed in byte [default: 10mb]
         -t|--timeout[=UInt]          timeout in second to receive a paste [default: 1]
@@ -33,7 +33,7 @@ unit sub MAIN(
     Str        :u(:$url)           = $address,    #= uses this url when generating links
     UInt       :p(:$tcp-port)      = 9999,        #= bind to this port (tcp server)
     UInt       :w(:$web-port)      = 4433,        #= bind to this port (web server)
-    Str        :d(:$directory) is required,       #= use this directory to save/serve the pastes
+    Str        :d(:$directory) is required,       #= directory to save/serve the pastes [mendatory]
     UInt       :m(:$max-dir-size)  = 104_857_600, #= max directory size allowed in byte
     UInt       :f(:$max-file-size) = 10_485_760,  #= max file size allowed in byte
     UInt       :t(:$timeout)       = 1,           #= timeout in second to receive a paste
