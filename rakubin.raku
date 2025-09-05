@@ -24,7 +24,7 @@ sub USAGE {
         -l|--logfile=<Str>           use that file for logging
         -v|--loglevel=<Loglevels>    log message up to that level [default: DEBUG]
         -r|--randlen[=UInt]          IDs length (may take time to generate) [default: 4]
-        -g|--gc                      Delete old paste if the pool is full [default: False]
+        -g|--gc                      delete old paste if the pool is full [default: False]
     USAGE
 }
 
@@ -42,7 +42,7 @@ unit sub MAIN(
     Str        :l(:$logfile),                     #= use that file for logging
     Loglevels  :v(:$loglevel)      = DEBUG,       #= log message up to that level
     UInt       :r(:$randlen)       = 4,           #= IDs length (may take time to generate)
-    Bool       :g(:$gc)            = False,       #= Delete old paste if the pool is full
+    Bool       :g(:$gc)            = False,       #= delete old paste if the pool is full
 );
 
 #####################

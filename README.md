@@ -24,7 +24,7 @@ options:
     -l|--logfile=<Str>           use that file for logging
     -v|--loglevel=<Loglevels>    log message up to that level [default: DEBUG]
     -r|--randlen[=UInt]          IDs length (may take time to generate) [default: 4]
-    -g|--gc                      Delete old paste if the pool is full [default: False]
+    -g|--gc                      delete old paste if the pool is full [default: False]
 ```
 
 Loglevels: `TRACE`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `FATAL`.
