@@ -54,7 +54,7 @@ my $is_tls    = so ($pkey-path and $cert-path);
 my $show_port = !so (($web-port == 80 and !$is_tls) or ($web-port == 443 and $is_tls));
 my $web_url   = "{$is_tls ?? "https" !! "http" }://{$url}{":" ~ $web-port if $show_port}";
 logger.send-to($logfile, :level(* >= $loglevel)) if $logfile;
-debug "IDS: {@IDs.elems} available";
+debug "IDS: {@IDs.elems} available of length $randlen";
 debug "logging up to $loglevel at $logfile" if $logfile;
 debug "is_tls: $is_tls";
 debug "show_port: $show_port";
@@ -105,16 +105,16 @@ given IO::Socket::Async.listen($address, $tcp-port) {
         LEAVE $client.close;
 
         # get client paste
-        my $data = "";
+        my $data = Buf[int8].new;
         react {
             whenever $client.Supply(:bin) -> $raw {
-                if $data.chars >= $max-file-size {
+                if $data.Blob.bytes >= $max-file-size {
                     $data = "";
                     fatal "Trying to send too much data !!!";
                     $client.say: "Too much data, try smaller :)";
                     done;
                 }
-                $data ~= $raw.decode;
+                $data.append($raw);
             }
             whenever Promise.in($timeout) {
                 done
@@ -123,7 +123,7 @@ given IO::Socket::Async.listen($address, $tcp-port) {
 
         given $data {
             # empty do nothing
-            when .chars == 0 {}
+            when .bytes == 0 {}
             # create a paste
             default {
                 #gc IDs
